@@ -18,50 +18,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Create issue on push to main
-        if: github.event_name == 'push'
-        uses: actions/github-script@v6
-        with:
-          script: |
-            github.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: 'Push Event Triggered',
-              body: 'An issue was created because a push was made to the main branch.'
-            })
+      - name: Echo message on push to main
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        run: |
+          echo "Push Event Triggered: An issue was supposed to be created because a push was made to the main branch."
 
-      - name: Create issue on pull request to develop
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v6
-        with:
-          script: |
-            github.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: 'Pull Request Event Triggered',
-              body: 'An issue was created because a pull request was made to the develop branch.'
-            })
+      - name: Echo message on pull request to develop
+        if: ${{ github.event_name == 'pull_request' && github.base_ref == 'develop' }}
+        run: |
+          echo "Pull Request Event Triggered: An issue was supposed to be created because a pull request was made to the develop branch."
 
-      - name: Create issue on schedule
-        if: github.event_name == 'schedule'
-        uses: actions/github-script@v6
-        with:
-          script: |
-            github.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: 'Scheduled Task Triggered',
-              body: 'An issue was created because the workflow ran at the scheduled time.'
-            })
+      - name: Echo message on schedule
+        if: ${{ github.event_name == 'schedule' }}
+        run: |
+          echo "Scheduled Task Triggered: An issue was supposed to be created because the workflow ran at the scheduled time."
 
-      - name: Create issue on manual dispatch
-        if: github.event_name == 'workflow_dispatch'
-        uses: actions/github-script@v6
-        with:
-          script: |
-            github.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: 'Manual Dispatch Triggered',
-              body: 'An issue was created because the workflow was manually triggered.'
-            })
+      - name: Echo message on manual dispatch
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          echo "Manual Dispatch Triggered: An issue was supposed to be created because the workflow was manually triggered."
