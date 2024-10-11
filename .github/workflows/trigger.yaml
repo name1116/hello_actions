@@ -1,0 +1,67 @@
+name: Triggered Issue Creation Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - develop
+  schedule:
+    - cron: '* * * * *' # 1분마다 실행 (실제로는 30분 이상 걸림)
+  workflow_dispatch: # 수동 실행 가능
+
+jobs:
+  create-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create issue on push to main
+        if: github.event_name == 'push'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Push Event Triggered',
+              body: 'An issue was created because a push was made to the main branch.'
+            })
+
+      - name: Create issue on pull request to develop
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Pull Request Event Triggered',
+              body: 'An issue was created because a pull request was made to the develop branch.'
+            })
+
+      - name: Create issue on schedule
+        if: github.event_name == 'schedule'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Scheduled Task Triggered',
+              body: 'An issue was created because the workflow ran at the scheduled time.'
+            })
+
+      - name: Create issue on manual dispatch
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Manual Dispatch Triggered',
+              body: 'An issue was created because the workflow was manually triggered.'
+            })
